@@ -1,0 +1,29 @@
+# 配置数据源
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://localhost:3306/springboot_vue?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+
+# 修改默认端口
+server:
+  port: 9090
+
+mybatis-plus:
+  # 开启数据库字段名自动转换为驼峰，指定实体类的包地址
+  type-aliases-package: top.year21.springboot.entity
+  configuration:
+    # 在控制台打印mybatis-plus生成的sql查询语句
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+  #扫描通用枚举的包
+  type-enums-package: top.year21.springboot.enums
+
+#指定文件上传的保存位置
+files:
+  upload:
+    path: /home/files/
+#    path: D:/linuxFile/files/
+

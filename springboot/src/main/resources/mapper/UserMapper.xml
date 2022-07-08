@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.year21.springboot.mapper.UserMapper">
+
+    <resultMap id="userBookList" type="user">
+        <id property="id" column="id"></id>
+        <result property="username" column="username"></result>
+        <result property="password" column="password"></result>
+        <result property="nickName" column="nick_name"></result>
+        <result property="age" column="age"></result>
+        <result property="sex" column="sex"></result>
+        <result property="address" column="address"></result>
+        <result property="role" column="role"></result>
+
+        <collection property="bookList" ofType="book">
+            <id property="id" column="b_id"></id>
+            <result property="name" column="b_name"></result>
+            <result property="price" column="b_price"></result>
+        </collection>
+    </resultMap>
+
+
+    <!--    Page<User> findPage(Page<User> page);-->
+    <select id="findPage" resultMap="userBookList">
+            SELECT u.*,b.`id` b_id,b.`name` b_name,b.`price` b_price
+            FROM `user` u LEFT JOIN `book` b
+            ON u.id = b.`user_id`
+            WHERE u.`id` = #{id}
+    </select>
+</mapper>

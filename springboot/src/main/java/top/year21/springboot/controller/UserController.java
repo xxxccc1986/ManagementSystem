@@ -5,9 +5,10 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import top.year21.springboot.entity.Message;
+import top.year21.springboot.common.Message;
 import top.year21.springboot.entity.User;
 import top.year21.springboot.service.UserService;
+
 
 
 /**
@@ -31,12 +32,12 @@ public class UserController {
      * Description : 增加新的用户
      * @date 2022/6/22
      * @param user 新增的用户信息
-     * @return top.year21.springboot.entity.Message
+     * @return top.year21.springboot.common.Message
      **/
     @PostMapping("/save") //例如这个，完整地址是localhost:9090/user/save
     public Message savaUser(@RequestBody User user){
-        if (user.getPassWord() == null){
-            user.setPassWord("default");
+        if (user.getPassword() == null){
+            user.setPassword("default");
         }
         boolean result = userService.save(user);
         return Message.success().add("插入结果",result);
@@ -46,12 +47,16 @@ public class UserController {
      * Description : 更新用户
      * @date 2022/6/23
      * @param user 待更新的用户数据
-     * @return top.year21.springboot.entity.Message
+     * @return top.year21.springboot.common.Message
      **/
     @PutMapping("/update") //例如这个，完整地址是localhost:9090/user/update
     public Message updateUser(@RequestBody User user){
         boolean result = userService.updateById(user);
-        return Message.success().add("更新结果",result);
+        if(result){
+            return Message.success().add("更新结果",result);
+        }
+        return Message.fail();
+
     }
 
 //    @DeleteMapping("/delete/{id}") //例如这个，完整地址是localhost:9090/user/update
@@ -76,13 +81,38 @@ public class UserController {
      **/
     @GetMapping("/query")
     public Message getPageData(@RequestParam("pageNum") Integer pageNum,
-                               @RequestParam("pageSize")  Integer pageSize,
+                               @RequestParam("pageSize") Integer pageSize,
                                @RequestParam("search")  String search){
         Page<User> page = new Page<>(pageNum, pageSize);
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
         userQueryWrapper.like(StringUtils.isNotBlank("search"),"username",search);
         userService.page(page,userQueryWrapper);
         return Message.success().add("data",page);
+    }
+
+    /**
+     * Description : 查询用户角色
+     * @date 2022/7/5
+     * @param id 用户id
+     * @return top.year21.springboot.common.Message
+     **/
+    @GetMapping("/{id}")
+    public Message QueryRole(@PathVariable Long id ){
+        User destUser = userService.getById(id);
+
+        return Message.success().add("user",destUser);
+    }
+
+    /**
+     * Description : 根据用户id查询与此用户id绑定的书籍
+     * @date 2022/7/5
+     * @param id 用户id
+     * @return top.year21.springboot.common.Message
+     **/
+    @GetMapping("/userBookList/{id}")
+    public Message queryUserBookList(@PathVariable("id") Integer id){
+        User user = userService.serviceFindPage(id);
+        return Message.success().add("user",user);
     }
 
 }
